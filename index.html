@@ -390,6 +390,7 @@ function pomodoroForWeek(wk){
 let SETTINGS = {guitarMode:'monwed'};
 let EVENTS = [];
 let PROGRESS = {goalChecks:{}, dsaChecks:{}, dailyChecks:{}};
+let lastLocalSaveAt = 0;
 
 function localFallbackGet(key, fallback){
   try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }catch(e){ return fallback; }
@@ -419,10 +420,12 @@ async function loadAll(){
   PROGRESS = localFallbackGet('app-progress', {goalChecks:{}, dsaChecks:{}, dailyChecks:{}});
 }
 async function saveAll(){
+  const updatedAt = Date.now();
+  lastLocalSaveAt = updatedAt;
   localFallbackSaveAll(); // always keep a local safety copy too
   if(SYNC_CODE && firebaseReady){
     try{
-      await db.collection('ledger').doc(SYNC_CODE).set({settings:SETTINGS, events:EVENTS, progress:PROGRESS, updatedAt:Date.now()});
+      await db.collection('ledger').doc(SYNC_CODE).set({settings:SETTINGS, events:EVENTS, progress:PROGRESS, updatedAt});
     }catch(e){ console.warn('Firestore save failed:', e.message); }
   }
 }
@@ -437,6 +440,8 @@ function startRealtimeSync(){
   unsubscribeSync = db.collection('ledger').doc(SYNC_CODE).onSnapshot(doc=>{
     if(!doc.exists) return;
     const data = doc.data();
+    if(data.updatedAt && data.updatedAt < lastLocalSaveAt) return;
+    if(data.updatedAt) lastLocalSaveAt = Math.max(lastLocalSaveAt, data.updatedAt);
     SETTINGS = data.settings || SETTINGS;
     EVENTS = data.events || [];
     PROGRESS = data.progress || PROGRESS;
@@ -658,10 +663,12 @@ function renderTimeline(container, blocks, dateForKey){
         ${b.note? `<div class="note">${b.note}</div>`:''}
       </div>`;
     row.querySelector('.chk').addEventListener('change',(e)=>{
-      let arr = PROGRESS.dailyChecks[dk] || [];
-      if(e.target.checked){ if(!arr.includes(i)) arr.push(i); }
-      else { arr = arr.filter(x=>x!==i); }
-      PROGRESS.dailyChecks[dk]=arr;
+      const checkedSet = new Set(PROGRESS.dailyChecks[dk] || []);
+      if(e.target.checked) checkedSet.add(i);
+      else checkedSet.delete(i);
+      const arr = [...checkedSet].sort((a,b)=>a-b);
+      if(arr.length) PROGRESS.dailyChecks[dk]=arr;
+      else delete PROGRESS.dailyChecks[dk];
       saveProgress();
       row.classList.toggle('done', e.target.checked);
     });
@@ -855,7 +862,8 @@ function goalItem(id, text){
   div.className='goal-item'+(checked?' checked':'');
   div.innerHTML = `<input type="checkbox" ${checked?'checked':''}><span>${text}</span>`;
   div.querySelector('input').addEventListener('change',(e)=>{
-    PROGRESS.goalChecks[id]=e.target.checked;
+    if(e.target.checked) PROGRESS.goalChecks[id]=true;
+    else delete PROGRESS.goalChecks[id];
     saveProgress();
     div.classList.toggle('checked', e.target.checked);
   });
@@ -952,7 +960,8 @@ function renderDSA(){
     row.className='module-row'+(checked?' checked':'');
     row.innerHTML = `<input type="checkbox" ${checked?'checked':''}><div class="m-title">${m.t}</div><div class="m-week">Week ${m.w}</div>`;
     row.querySelector('input').addEventListener('change',(e)=>{
-      PROGRESS.dsaChecks[m.id]=e.target.checked;
+      if(e.target.checked) PROGRESS.dsaChecks[m.id]=true;
+      else delete PROGRESS.dsaChecks[m.id];
       saveProgress();
       renderDSA();
     });
