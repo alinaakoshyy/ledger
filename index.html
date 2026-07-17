@@ -439,6 +439,7 @@ function startRealtimeSync(){
   if(!(SYNC_CODE && firebaseReady)) return;
   unsubscribeSync = db.collection('ledger').doc(SYNC_CODE).onSnapshot(doc=>{
     if(!doc.exists) return;
+    if(doc.metadata && doc.metadata.hasPendingWrites) return;
     const data = doc.data();
     if(data.updatedAt && data.updatedAt < lastLocalSaveAt) return;
     if(data.updatedAt) lastLocalSaveAt = Math.max(lastLocalSaveAt, data.updatedAt);
@@ -662,15 +663,17 @@ function renderTimeline(container, blocks, dateForKey){
         <div class="title">${b.title}</div>
         ${b.note? `<div class="note">${b.note}</div>`:''}
       </div>`;
-    row.querySelector('.chk').addEventListener('change',(e)=>{
+    row.querySelector('.chk').addEventListener('change', async (e)=>{
       const checkedSet = new Set(PROGRESS.dailyChecks[dk] || []);
       if(e.target.checked) checkedSet.add(i);
       else checkedSet.delete(i);
       const arr = [...checkedSet].sort((a,b)=>a-b);
       if(arr.length) PROGRESS.dailyChecks[dk]=arr;
       else delete PROGRESS.dailyChecks[dk];
-      saveProgress();
       row.classList.toggle('done', e.target.checked);
+      await saveProgress();
+      renderToday();
+      if(sameDay(weekSelectedDay, dateForKey)) renderWeekDay();
     });
     container.appendChild(row);
   });
@@ -861,11 +864,11 @@ function goalItem(id, text){
   const div = document.createElement('div');
   div.className='goal-item'+(checked?' checked':'');
   div.innerHTML = `<input type="checkbox" ${checked?'checked':''}><span>${text}</span>`;
-  div.querySelector('input').addEventListener('change',(e)=>{
+  div.querySelector('input').addEventListener('change', async (e)=>{
     if(e.target.checked) PROGRESS.goalChecks[id]=true;
     else delete PROGRESS.goalChecks[id];
-    saveProgress();
     div.classList.toggle('checked', e.target.checked);
+    await saveProgress();
   });
   return div;
 }
@@ -959,10 +962,10 @@ function renderDSA(){
     const row=document.createElement('div');
     row.className='module-row'+(checked?' checked':'');
     row.innerHTML = `<input type="checkbox" ${checked?'checked':''}><div class="m-title">${m.t}</div><div class="m-week">Week ${m.w}</div>`;
-    row.querySelector('input').addEventListener('change',(e)=>{
+    row.querySelector('input').addEventListener('change', async (e)=>{
       if(e.target.checked) PROGRESS.dsaChecks[m.id]=true;
       else delete PROGRESS.dsaChecks[m.id];
-      saveProgress();
+      await saveProgress();
       renderDSA();
     });
     c.appendChild(row);
