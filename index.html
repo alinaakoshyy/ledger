@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Ledger — 6-Month Operating Schedule (Local Copy)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#10151F;
+  --panel:#171F2E;
+  --panel-alt:#1E2738;
+  --accent:#E8A33D;
+  --accent-dim:#8a6423;
+  --teal:#4FB8A8;
+  --danger:#E85D4F;
+  --text:#EDEDE3;
+  --muted:#8994A6;
+  --border:#2A3446;
+  --font-d:'Space Grotesk',sans-serif;
+  --font-b:'Inter',sans-serif;
+  --font-m:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-b);-webkit-font-smoothing:antialiased;}
+a{color:inherit;}
+::selection{background:var(--accent);color:#10151F;}
+
+/* ---------- layout shell ---------- */
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px;}
+header.top{display:flex;flex-direction:column;gap:4px;margin-bottom:22px;}
+.eyebrow{font-family:var(--font-m);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);}
+h1{font-family:var(--font-d);font-weight:700;font-size:clamp(26px,4vw,38px);margin:2px 0 6px;letter-spacing:-.01em;}
+.sub{color:var(--muted);font-size:14px;max-width:60ch;line-height:1.5;}
+
+nav.tabs{display:flex;gap:6px;overflow-x:auto;margin:24px 0 20px;border-bottom:1px solid var(--border);padding-bottom:0;}
+nav.tabs button{
+  background:none;border:none;color:var(--muted);font-family:var(--font-b);font-weight:600;font-size:13.5px;
+  padding:10px 14px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:.15s;
+}
+nav.tabs button:hover{color:var(--text);}
+nav.tabs button.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+.panel{display:none;}
+.panel.active{display:block;animation:fade .25s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:translateY(0);}}
+
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:16px;}
+.card h2{font-family:var(--font-d);font-size:17px;margin:0 0 4px;}
+.card .meta{font-family:var(--font-m);font-size:12px;color:var(--muted);margin-bottom:14px;}
+
+/* ---------- The Lamp (signature element) ---------- */
+.lamp-card{
+  background:radial-gradient(circle at 30% 20%, #22293c, var(--panel) 60%);
+  border:1px solid var(--border);border-radius:18px;padding:24px;display:flex;gap:22px;align-items:center;margin-bottom:20px;
+}
+.lamp-dial{position:relative;width:112px;height:112px;flex-shrink:0;}
+.lamp-dial svg{transform:rotate(-90deg);}
+.lamp-dial .ring-bg{fill:none;stroke:#232c40;stroke-width:8;}
+.lamp-dial .ring-fg{fill:none;stroke:var(--accent);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .3s linear, stroke .3s;filter:drop-shadow(0 0 6px rgba(232,163,61,.55));}
+.lamp-dial .ring-fg.break{stroke:var(--teal);filter:drop-shadow(0 0 6px rgba(79,184,168,.55));}
+.lamp-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.lamp-center .time{font-family:var(--font-m);font-size:22px;font-weight:600;}
+.lamp-center .phase{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:2px;}
+.lamp-info{flex:1;min-width:0;}
+.lamp-info h3{font-family:var(--font-d);margin:0 0 4px;font-size:18px;}
+.lamp-info p{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.5;}
+.lamp-controls{display:flex;gap:8px;flex-wrap:wrap;}
+.lamp-controls button{
+  font-family:var(--font-b);font-weight:600;font-size:13px;padding:9px 16px;border-radius:9px;border:1px solid var(--border);
+  background:var(--panel-alt);color:var(--text);cursor:pointer;transition:.15s;
+}
+.lamp-controls button.primary{background:var(--accent);color:#1b1204;border-color:var(--accent);}
+.lamp-controls button:hover{opacity:.85;}
+
+/* ---------- timeline ---------- */
+.timeline{position:relative;padding-left:0;}
+.tblock{
+  display:grid;grid-template-columns:92px 10px 1fr;gap:12px;align-items:start;padding:10px 0;border-bottom:1px dashed var(--border);
+}
+.tblock:last-child{border-bottom:none;}
+.tblock .t{font-family:var(--font-m);font-size:12px;color:var(--muted);padding-top:2px;}
+.tblock .dot{width:10px;height:10px;border-radius:50%;margin-top:4px;}
+.tblock .body{min-width:0;}
+.tblock .title{font-weight:600;font-size:14.5px;}
+.tblock .note{font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.4;}
+.tblock.done .title, .tblock.done .note{opacity:.45;text-decoration:line-through;}
+.tblock .chk{float:right;width:17px;height:17px;accent-color:var(--accent);cursor:pointer;margin-top:2px;}
+
+.tag{display:inline-block;font-family:var(--font-m);font-size:10.5px;padding:2px 7px;border-radius:6px;text-transform:uppercase;letter-spacing:.05em;margin-left:8px;vertical-align:middle;}
+.banner{border-radius:10px;padding:12px 14px;font-size:13.5px;margin-bottom:14px;border:1px solid;}
+.banner.drive{background:rgba(232,93,79,.1);border-color:var(--danger);color:#f2b4ac;}
+.banner.exam{background:rgba(232,163,61,.1);border-color:var(--accent);color:#f0c98a;}
+.banner.other{background:rgba(79,184,168,.1);border-color:var(--teal);color:#a9e0d8;}
+
+/* ---------- week grid ---------- */
+.weekgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:6px;}
+.daychip{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:.15s;}
+.daychip:hover{border-color:var(--accent);}
+.daychip.today{border-color:var(--accent);background:var(--panel-alt);}
+.daychip .dow{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+.daychip .num{font-family:var(--font-d);font-size:18px;font-weight:600;margin:2px 0;}
+.daychip .flag{font-size:9px;color:var(--danger);font-weight:600;}
+.weeknav{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.weeknav button{background:var(--panel-alt);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px;}
+.weeknav .lbl{font-family:var(--font-m);font-size:12.5px;color:var(--muted);}
+
+/* ---------- goals / dsa list ---------- */
+.goal-group h3{font-family:var(--font-d);font-size:15px;color:var(--accent);margin:18px 0 8px;}
+.goal-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);}
+.goal-item input{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
+.goal-item span{font-size:13.5px;line-height:1.45;}
+.goal-item.checked span{opacity:.4;text-decoration:line-through;}
+.progress-bar{height:6px;border-radius:4px;background:var(--panel-alt);overflow:hidden;margin:6px 0 2px;}
+.progress-bar > div{height:100%;background:var(--accent);}
+
+.module-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);}
+.module-row input{width:16px;height:16px;accent-color:var(--teal);cursor:pointer;flex-shrink:0;}
+.module-row .m-title{flex:1;font-size:13.5px;font-weight:500;}
+.module-row.checked .m-title{opacity:.4;text-decoration:line-through;}
+.module-row .m-week{font-family:var(--font-m);font-size:11px;color:var(--muted);background:var(--panel-alt);padding:3px 8px;border-radius:6px;white-space:nowrap;}
+
+/* ---------- forms ---------- */
+label{display:block;font-size:12.5px;color:var(--muted);margin:12px 0 5px;font-weight:600;}
+input[type=text],input[type=date],textarea,select{
+  width:100%;background:var(--panel-alt);border:1px solid var(--border);color:var(--text);border-radius:8px;
+  padding:10px 12px;font-family:var(--font-b);font-size:13.5px;
+}
+textarea{resize:vertical;min-height:60px;}
+.formrow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+button.submit{margin-top:16px;background:var(--accent);color:#1b1204;border:none;font-weight:700;padding:11px 18px;border-radius:9px;cursor:pointer;font-size:13.5px;}
+button.submit:hover{opacity:.9;}
+.event-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
+.event-row .et{font-family:var(--font-m);font-size:10.5px;color:var(--bg);background:var(--accent);padding:2px 8px;border-radius:6px;text-transform:uppercase;}
+.event-row.exam .et{background:var(--accent);}
+.event-row.drive .et{background:var(--danger);color:#fff;}
+.event-row.other .et{background:var(--teal);color:#04231f;}
+.event-row .del{background:none;border:1px solid var(--border);color:var(--muted);border-radius:7px;padding:5px 10px;cursor:pointer;font-size:12px;flex-shrink:0;}
+.event-row .del:hover{color:var(--danger);border-color:var(--danger);}
+.event-row .name{font-weight:600;font-size:13.5px;}
+.event-row .dates{font-family:var(--font-m);font-size:11.5px;color:var(--muted);margin-top:2px;}
+
+.toggle-group{display:flex;gap:8px;margin-top:6px;}
+.toggle-group button{flex:1;background:var(--panel-alt);border:1px solid var(--border);color:var(--muted);padding:10px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600;}
+.toggle-group button.on{background:var(--accent);color:#1b1204;border-color:var(--accent);}
+
+.note-callout{font-size:12.5px;color:var(--muted);background:var(--panel-alt);border-left:3px solid var(--accent);padding:10px 12px;border-radius:0 8px 8px 0;margin-top:10px;line-height:1.5;}
+.empty{color:var(--muted);font-size:13px;text-align:center;padding:30px 0;}
+footer{text-align:center;color:var(--muted);font-size:11.5px;margin-top:40px;font-family:var(--font-m);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <span class="eyebrow">Operating schedule · Jul 2026 – Jan 2027</span>
+    <h1>The Ledger</h1>
+    <p class="sub">Your six-month build: DSA, Godrej prep, IIM course, college, guitar, gym and FFL 4.0 — reshuffled automatically around whatever you drop into Events.</p>
+  </header>
+
+  <nav class="tabs">
+    <button data-tab="today" class="active">Today</button>
+    <button data-tab="week">Week</button>
+    <button data-tab="goals">Goals</button>
+    <button data-tab="dsa">DSA Tracker</button>
+    <button data-tab="events">Events</button>
+    <button data-tab="settings">Settings</button>
+  </nav>
+
+  <!-- TODAY -->
+  <section class="panel active" id="panel-today">
+    <div class="lamp-card">
+      <div class="lamp-dial">
+        <svg width="112" height="112" viewBox="0 0 112 112">
+          <circle class="ring-bg" cx="56" cy="56" r="48"></circle>
+          <circle id="lampRing" class="ring-fg" cx="56" cy="56" r="48" stroke-dasharray="301.6" stroke-dashoffset="301.6"></circle>
+        </svg>
+        <div class="lamp-center">
+          <div class="time" id="lampTime">--:--</div>
+          <div class="phase" id="lampPhase">focus</div>
+        </div>
+      </div>
+      <div class="lamp-info">
+        <h3 id="lampTitle">The Lamp — focus timer</h3>
+        <p id="lampDesc">Loading this week's Pomodoro length…</p>
+        <div class="lamp-controls">
+          <button class="primary" id="lampStart">Start focus</button>
+          <button id="lampPause">Pause</button>
+          <button id="lampReset">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="todayBanner"></div>
+    <div class="card">
+      <h2 id="todayTitle">Today</h2>
+      <div class="meta" id="todayMeta"></div>
+      <div class="timeline" id="todayTimeline"></div>
+    </div>
+  </section>
+
+  <!-- WEEK -->
+  <section class="panel" id="panel-week">
+    <div class="card">
+      <div class="weeknav">
+        <button id="weekPrev">← Prev</button>
+        <span class="lbl" id="weekLabel"></span>
+        <button id="weekNext">Next →</button>
+      </div>
+      <div class="weekgrid" id="weekGrid"></div>
+      <div class="note-callout">Tap a day to view its full schedule below.</div>
+    </div>
+    <div class="card">
+      <h2 id="weekDayTitle">—</h2>
+      <div class="meta" id="weekDayMeta"></div>
+      <div id="weekDayBanner"></div>
+      <div class="timeline" id="weekDayTimeline"></div>
+    </div>
+  </section>
+
+  <!-- GOALS -->
+  <section class="panel" id="panel-goals">
+    <div class="card">
+      <h2>3-Month Milestones</h2>
+      <div class="meta">The two big checkpoints of the six months</div>
+      <div id="threeMonthGoals"></div>
+    </div>
+    <div class="card">
+      <h2>Monthly Goals</h2>
+      <div class="meta">Auto-selected for the current calendar month</div>
+      <div class="toggle-group" id="monthPicker"></div>
+      <div id="monthlyGoals"></div>
+    </div>
+    <div class="card">
+      <h2>Weekly Goals</h2>
+      <div class="meta" id="weekGoalMeta"></div>
+      <div class="weeknav">
+        <button id="goalWeekPrev">← Prev</button>
+        <span class="lbl" id="goalWeekLabel"></span>
+        <button id="goalWeekNext">Next →</button>
+      </div>
+      <div id="weeklyGoals"></div>
+    </div>
+  </section>
+
+  <!-- DSA TRACKER -->
+  <section class="panel" id="panel-dsa">
+    <div class="card">
+      <h2>DSA with Java — Tutedude Syllabus</h2>
+      <div class="meta">~68 hrs of runtime across 18 modules + 5 assignments + final interview prep, mapped week by week</div>
+      <div class="progress-bar"><div id="dsaProgressBar" style="width:0%"></div></div>
+      <div class="meta" id="dsaProgressLabel"></div>
+      <div id="dsaList"></div>
+    </div>
+  </section>
+
+  <!-- EVENTS -->
+  <section class="panel" id="panel-events">
+    <div class="card">
+      <h2>Add a drive, exam or one-off</h2>
+      <div class="meta">Adding this reshapes that day (or date range) across Today and Week automatically.</div>
+      <label>Title</label>
+      <input type="text" id="evTitle" placeholder="e.g. Godrej Infotech placement drive">
+      <label>Type</label>
+      <select id="evType">
+        <option value="drive">Placement drive</option>
+        <option value="exam">Exam / Internal Assessment</option>
+        <option value="other">Other (informational only)</option>
+      </select>
+      <div class="formrow">
+        <div><label>Start date</label><input type="date" id="evStart"></div>
+        <div><label>End date (optional)</label><input type="date" id="evEnd"></div>
+      </div>
+      <label>Notes</label>
+      <textarea id="evNotes" placeholder="Reporting time, venue, subjects to revise, etc."></textarea>
+      <button class="submit" id="evAdd">Add to schedule</button>
+    </div>
+    <div class="card">
+      <h2>Upcoming & active</h2>
+      <div id="eventList"></div>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="panel" id="panel-settings">
+    <div class="card">
+      <h2>Cross-device sync</h2>
+      <div class="meta">Enter the exact same code on every device (laptop, phone, iPad) to keep them in sync</div>
+      <label>Sync code</label>
+      <input type="text" id="syncCodeInput" placeholder="e.g. tinywrath-ledger-2026">
+      <button class="submit" id="syncConnect">Connect this device</button>
+      <div class="note-callout" id="syncStatus" style="margin-top:12px;">Checking…</div>
+    </div>
+    <div class="card">
+      <h2>Guitar days</h2>
+      <div class="meta">You said either Mon/Wed or Saturday — pick which pattern the schedule should build around.</div>
+      <div class="toggle-group">
+        <button id="gtMonWed" class="on">Mon &amp; Wed, 4:30–6:30pm</button>
+        <button id="gtSat">Saturday, 4–6pm</button>
+      </div>
+      <div class="note-callout">Recommendation: Mon/Wed keeps Saturday free as your long catch-up study day. Switch anytime — the whole schedule recalculates.</div>
+    </div>
+    <div class="card">
+      <h2>Key adjustments I made — read before you rely on this</h2>
+      <div class="meta">Flagging these so nothing surprises you</div>
+      <div class="note-callout" style="margin-top:0;">
+      <b>1. Gym vs. staying up till 4:30am.</b> These directly conflict on days you also need to be up for 6:30am gym — that's 1.5–2 hrs of sleep. So the "night owl" block is concentrated on <b>Friday night → Saturday</b> (no gym Sat, no early Sunday need until church), where you can genuinely stay up late and sleep in. Sun–Thu nights use an earlier bedtime (~11:30pm–12am) so the gym and college/IIM mornings are actually sustainable. Your 1–4pm nap survives fully on non-college days; on college days it's compressed to ~1.5hrs after commute.<br><br>
+      <b>2. Gym time on college days.</b> From Jul 31, gym shifts to 6:00–8:00am (30 min earlier) so there's room to commute and reach college by 9am. Pre-college days keep your original 6:30–8:30am.<br><br>
+      <b>3. Aptitude/revision slot.</b> Placed on Tue/Thu/Fri/Sat (4 days, skipping your guitar days and Sunday) as you said I could decide.<br><br>
+      <b>4. IIM course</b> is treated as ongoing Mon–Fri 8–9:30pm from Jul 25 — update the end date in Settings if it has a fixed finish.
+      </div>
+    </div>
+    <div class="card">
+      <h2>Data</h2>
+      <div class="meta">Everything (events, checked goals, ticked modules) is saved to your account and persists across visits.</div>
+      <button class="submit" style="background:var(--danger)" id="resetData">Reset all saved progress</button>
+    </div>
+  </section>
+
+  <footer>Built for the next 26 weeks · Jul 17 2026 → Jan 16 2027 · Local copy — saves to this browser only</footer>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script>
+/* =========================================================================
+   FIREBASE CONFIG — paste your project's config object below.
+   Get this from: Firebase Console → Project settings → General →
+   "Your apps" → SDK setup and configuration → Config.
+   Until you paste real values here, the app just runs on local browser
+   storage (like before) — nothing breaks, it simply won't sync.
+   ========================================================================= */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAGn1VY_tbitoSXHa6Lb18P6wF6rRu-keE",
+  authDomain: "tinywrath-ledger.firebaseapp.com",
+  projectId: "tinywrath-ledger",
+  storageBucket: "tinywrath-ledger.firebasestorage.app",
+  messagingSenderId: "372785708530",
+  appId: "1:372785708530:web:b9620794b16a3861c77f6b",
+  measurementId: "G-Z5KNDY16KY"
+};
+let db = null;
+let firebaseReady = false;
+try{
+  if(FIREBASE_CONFIG.apiKey && !FIREBASE_CONFIG.apiKey.startsWith('PASTE_')){
+    firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    firebaseReady = true;
+  }
+}catch(e){ console.warn('Firebase not ready:', e.message); firebaseReady=false; }
+
+let SYNC_CODE = localStorage.getItem('ledger-sync-code') || '';
+
+/* ============================= DATA MODEL ============================= */
+const START_DATE = new Date(2026,6,17);   // Fri Jul 17 2026
+const IIM_START   = new Date(2026,6,25);  // Sat Jul 25 2026 -> effective first Mon Jul 27
+const COLLEGE_START = new Date(2026,6,31);// Fri Jul 31 2026
+
+const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const CAT_COLORS = {
+  sleep:'#3A4258', gym:'#4FB8A8', travel:'#5B6478', college:'#E8A33D',
+  dsa:'#F2B84E', aptitude:'#7FA8D9', guitar:'#B98CE0', iim:'#4FB8A8',
+  church:'#D9C08A', meal:'#5B6478', nap:'#3A4258', free:'#6B7690',
+  event:'#E85D4F', wake:'#6B7690', assignment:'#F2B84E'
+};
+
+function pad(n){return n<10?'0'+n:''+n;}
+function dateKey(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function sameDay(a,b){return dateKey(a)===dateKey(b);}
+function startOfWeek(d){ // Monday-start week containing d
+  const dow=(d.getDay()+6)%7; return addDays(d,-dow);
+}
+function weekNumber(d){
+  const diff = Math.floor((startOfWeek(d) - startOfWeek(START_DATE)) / 86400000);
+  return Math.floor(diff/7)+1;
+}
+function fmtDateLong(d){return d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});}
+function fmtDateShort(d){return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});}
+
+function pomodoroForWeek(wk){
+  if(wk<=1) return {focus:15,brk:5,label:'Week 1 · 15 min focus / 5 min break'};
+  if(wk===2) return {focus:20,brk:5,label:'Week 2 · 20 min focus / 5 min break'};
+  return {focus:25,brk:5,label:'Week '+wk+' · 25 min focus / 5 min break (steady state)'};
+}
+
+/* ---------- persistence ---------- */
+let SETTINGS = {guitarMode:'monwed'};
+let EVENTS = [];
+let PROGRESS = {goalChecks:{}, dsaChecks:{}, dailyChecks:{}};
+
+function localFallbackGet(key, fallback){
+  try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }catch(e){ return fallback; }
+}
+function localFallbackSaveAll(){
+  try{
+    localStorage.setItem('app-settings', JSON.stringify(SETTINGS));
+    localStorage.setItem('app-events', JSON.stringify(EVENTS));
+    localStorage.setItem('app-progress', JSON.stringify(PROGRESS));
+  }catch(e){}
+}
+async function loadAll(){
+  if(SYNC_CODE && firebaseReady){
+    try{
+      const doc = await db.collection('ledger').doc(SYNC_CODE).get();
+      if(doc.exists){
+        const data = doc.data();
+        SETTINGS = data.settings || {guitarMode:'monwed'};
+        EVENTS = data.events || [];
+        PROGRESS = data.progress || {goalChecks:{}, dsaChecks:{}, dailyChecks:{}};
+        return;
+      }
+    }catch(e){ console.warn('Firestore load failed, using local copy instead:', e.message); }
+  }
+  SETTINGS = localFallbackGet('app-settings', {guitarMode:'monwed'});
+  EVENTS = localFallbackGet('app-events', []);
+  PROGRESS = localFallbackGet('app-progress', {goalChecks:{}, dsaChecks:{}, dailyChecks:{}});
+}
+async function saveAll(){
+  localFallbackSaveAll(); // always keep a local safety copy too
+  if(SYNC_CODE && firebaseReady){
+    try{
+      await db.collection('ledger').doc(SYNC_CODE).set({settings:SETTINGS, events:EVENTS, progress:PROGRESS, updatedAt:Date.now()});
+    }catch(e){ console.warn('Firestore save failed:', e.message); }
+  }
+}
+async function saveSettings(){ await saveAll(); }
+async function saveEvents(){ await saveAll(); }
+async function saveProgress(){ await saveAll(); }
+
+let unsubscribeSync = null;
+function startRealtimeSync(){
+  if(unsubscribeSync){ unsubscribeSync(); unsubscribeSync=null; }
+  if(!(SYNC_CODE && firebaseReady)) return;
+  unsubscribeSync = db.collection('ledger').doc(SYNC_CODE).onSnapshot(doc=>{
+    if(!doc.exists) return;
+    const data = doc.data();
+    SETTINGS = data.settings || SETTINGS;
+    EVENTS = data.events || [];
+    PROGRESS = data.progress || PROGRESS;
+    refreshEverything();
+  });
+}
+function refreshEverything(){
+  renderToday(); renderWeek(); renderThreeMonth(); renderMonthPicker();
+  renderMonthlyGoals(); renderWeeklyGoals(); renderDSA(); renderEvents();
+  if(document.getElementById('gtSat')){
+    document.getElementById('gtSat').classList.toggle('on', SETTINGS.guitarMode==='sat');
+    document.getElementById('gtMonWed').classList.toggle('on', SETTINGS.guitarMode!=='sat');
+  }
+  updateSyncStatus();
+}
+function updateSyncStatus(){
+  const el = document.getElementById('syncStatus');
+  if(!el) return;
+  if(!firebaseReady){ el.textContent = 'Firebase config not pasted in yet — running on this browser only.'; return; }
+  if(!SYNC_CODE){ el.textContent = 'Not connected — enter a sync code above and hit Connect.'; return; }
+  el.textContent = 'Synced ✓ — code: ' + SYNC_CODE + '. Enter this same code on your other devices.';
+}
+
+/* ============================= SCHEDULE ENGINE ============================= */
+function isGuitarDay(d){
+  const dow=d.getDay();
+  if(SETTINGS.guitarMode==='sat') return dow===6;
+  return dow===1 || dow===3;
+}
+function isCollegeDay(d){
+  const dow=d.getDay();
+  return d>=COLLEGE_START && dow>=1 && dow<=5;
+}
+function isIIMDay(d){
+  const dow=d.getDay();
+  return d>=IIM_START && dow>=1 && dow<=5 && dow!==0 && !(dow===6);
+}
+function findEvent(d){
+  const k=dateKey(d);
+  return EVENTS.find(e=>{
+    const s=e.start, en=e.end||e.start;
+    return k>=s && k<=en;
+  });
+}
+
+function B(start,end,title,cat,note){ return {start,end,title,cat,note:note||''}; }
+
+function buildDayBlocks(d){
+  const dow=d.getDay();
+  const college=isCollegeDay(d);
+  const iim=isIIMDay(d);
+  const guitar=isGuitarDay(d);
+  let blocks=[];
+
+  if(dow===0){ // SUNDAY
+    blocks=[
+      B('07:15','07:45','Wake & get ready','wake'),
+      B('08:00','12:00','Church & activities','church'),
+      B('12:00','13:00','Lunch','meal'),
+      B('13:00','15:30','Nap','nap','Your preferred afternoon sleep window'),
+      B('15:30','16:00','Freshen up','wake'),
+      B('16:00','18:00','Weekly review + light DSA revision','dsa','Look at what got checked off this week, plan the next one'),
+      B('18:00','18:30','Break','free'),
+      B('18:30','20:00','Aptitude / Godrej box-test practice','aptitude'),
+      B('20:00','20:30','Dinner','meal'),
+      B('20:30','23:00','Free time / FFL 4.0 admin','free'),
+      B('23:00','23:30','Wind down','sleep'),
+      B('23:30','06:00 (Mon)','Sleep','sleep','Earlier bedtime — Monday gym + guitar need you up at 6')
+    ];
+    return blocks;
+  }
+
+  if(dow===6){ // SATURDAY
+    if(guitar){
+      blocks=[
+        B('10:30','11:00','Wake up','wake','Recovery day — Friday night was your late one'),
+        B('11:00','11:30','Freshen up & breakfast','meal'),
+        B('11:30','13:30','DSA deep-work block','dsa'),
+        B('13:30','14:30','Lunch + break','meal'),
+        B('14:30','15:30','Aptitude / Godrej test practice','aptitude'),
+        B('15:30','16:00','Travel to guitar (incl. buffer)','travel'),
+        B('16:00','18:00','Guitar class','guitar'),
+        B('18:00','18:30','Travel back','travel'),
+        B('18:30','19:00','Dinner','meal'),
+        B('19:00','23:00','DSA practice / FFL 4.0 admin','dsa'),
+        B('23:00','23:30','Wind down','sleep'),
+        B('23:30','07:15 (Sun)','Sleep','sleep','Moderate bedtime — church at 8am')
+      ];
+    } else {
+      blocks=[
+        B('10:30','11:00','Wake up','wake','Recovery day — Friday night was your late one'),
+        B('11:00','11:30','Freshen up & breakfast','meal'),
+        B('11:30','13:30','DSA deep-work block','dsa'),
+        B('13:30','14:30','Lunch + break','meal'),
+        B('14:30','16:30','Aptitude / Godrej test prep + revision','aptitude','Saturdays are lighter — good day to catch up if you slipped'),
+        B('16:30','17:00','Break / snack','free'),
+        B('17:00','19:00','DSA practice problems','dsa'),
+        B('19:00','19:30','Dinner','meal'),
+        B('19:30','23:30','Free time / FFL 4.0 league admin','free'),
+        B('23:30','07:15 (Sun)','Sleep','sleep','Moderate bedtime — church at 8am')
+      ];
+    }
+    return blocks;
+  }
+
+  // MON–FRI
+  const isFriday = dow===5;
+  const gymStart = college ? '06:00' : '06:30';
+  const gymEnd   = college ? '08:00' : '08:30';
+  blocks.push(B(gymStart, gymEnd, 'Gym', 'gym', college? 'Shifted 30 min earlier on college days to leave room for the commute' : ''));
+
+  if(college){
+    blocks.push(B('08:00','08:15','Freshen up','wake'));
+    blocks.push(B('08:15','09:00','Travel to college','travel'));
+    blocks.push(B('09:00','13:00','College','college'));
+    blocks.push(B('13:00','14:00','Travel back + lunch on the way','travel'));
+    blocks.push(B('14:00','14:30','Lunch','meal'));
+    blocks.push(B('14:30','16:00','Nap','nap','Compressed from your ideal 1–4pm because of the commute'));
+    blocks.push(B('16:00','16:20','Freshen up','wake'));
+  } else {
+    blocks.push(B('08:30','09:00','Freshen up & breakfast','meal'));
+    blocks.push(B('09:00','10:00','Buffer / plan the day','free'));
+    blocks.push(B('10:00','12:00','DSA — Pomodoro block','dsa'));
+    if([2,4,5].includes(dow)){ // Tue,Thu,Fri get aptitude here too
+      blocks.push(B('12:00','12:30','Break','free'));
+      blocks.push(B('12:30','13:00','Aptitude / Godrej box-test prep','aptitude'));
+    } else {
+      blocks.push(B('12:00','13:00','DSA — continued','dsa'));
+    }
+    blocks.push(B('13:00','13:30','Lunch','meal'));
+    blocks.push(B('13:30','16:00','Nap','nap','Your preferred 1–4pm window'));
+    blocks.push(B('16:00','16:20','Freshen up','wake'));
+  }
+
+  // afternoon/evening: guitar vs normal DSA block vs aptitude day
+  if(guitar){
+    blocks.push(B('16:20','16:30','Quick snack','meal'));
+    blocks.push(B('16:00','16:30','Travel to guitar (incl. buffer)','travel'));
+    blocks.push(B('16:30','18:30','Guitar class','guitar'));
+    blocks.push(B('18:30','19:00','Travel back','travel'));
+  } else {
+    blocks.push(B('16:30', college? '18:30':'19:00', college? 'DSA — evening block':'DSA deep-work block','dsa'));
+    if(!college && [2,4].includes(dow)){
+      blocks.push(B('19:00','19:00','','free')); // placeholder no-op
+    }
+  }
+
+  // dinner + IIM/night stretch
+  const dinnerStart = guitar ? '19:00' : (college? '18:30':'19:00');
+  const dinnerEnd = (function(){const [h,m]=dinnerStart.split(':').map(Number); const dt=new Date(2000,0,1,h,m+30); return pad(dt.getHours())+':'+pad(dt.getMinutes());})();
+  blocks.push(B(dinnerStart, dinnerEnd, 'Dinner', 'meal'));
+
+  if(iim){
+    blocks.push(B(dinnerEnd,'20:00','Prep / breather','free'));
+    blocks.push(B('20:00','21:30','IIM — Digital Marketing course','iim'));
+    blocks.push(B('21:30','23:00','IIM assignment work / light DSA revision','dsa'));
+  } else {
+    blocks.push(B(dinnerEnd, isFriday? '23:59':'23:00', 'DSA / aptitude revision (extra runway before IIM starts)','dsa'));
+  }
+
+  if(isFriday){
+    blocks.push(B('23:00','04:30 (Sat)','Late one — read, plan, unwind, whatever you want','free','Your one real night-owl stretch this week. No gym tomorrow.'));
+  } else {
+    blocks.push(B('23:00','23:30','Wind down','sleep'));
+    blocks.push(B('23:30', college? '06:00':'06:30', 'Sleep','sleep'));
+  }
+
+  return blocks.filter(b=>b.title); // drop no-op placeholders
+}
+
+function applyEventOverride(blocks, ev, d){
+  if(!ev) return {blocks, banner:null};
+  if(ev.type==='drive'){
+    const filtered = blocks.filter(b=> b.cat==='sleep' || b.cat==='wake' || (b.cat==='meal' && b.start<'08:00'));
+    const out = [
+      B('06:30','07:00','Wake up','wake'),
+      B('07:00','07:30','Quick revision / breathe','dsa',"Keep it light — don't cram right before"),
+      B('08:00','17:00', ev.title, 'event', ev.notes||'Placement drive day — regular routine paused'),
+      B('17:00','17:30','Freshen up','wake'),
+      B('17:30','18:00','Dinner','meal'),
+      B('18:00','23:00','Decompress / catch up on anything urgent','free'),
+      B('23:00','23:30','Wind down','sleep'),
+      B('23:30','06:30','Sleep','sleep'),
+    ];
+    return {blocks: out, banner:{type:'drive', text:'Placement drive today — '+ev.title+(ev.notes? ' · '+ev.notes:'')}};
+  }
+  if(ev.type==='exam'){
+    const out = blocks.map(b=>{
+      if(b.cat==='dsa' || b.cat==='aptitude'){
+        return B(b.start,b.end,'Exam prep: '+ev.title,'event', ev.notes||'Revision, not new syllabus');
+      }
+      return b;
+    });
+    return {blocks: out, banner:{type:'exam', text:'Exam window — '+ev.title+(ev.notes? ' · '+ev.notes:'')}};
+  }
+  return {blocks, banner:{type:'other', text: ev.title+(ev.notes? ' · '+ev.notes:'')}};
+}
+
+function scheduleFor(d){
+  const base = buildDayBlocks(d);
+  const ev = findEvent(d);
+  return applyEventOverride(base, ev, d);
+}
+
+/* ============================= RENDER: TODAY ============================= */
+function renderTimeline(container, blocks, dateForKey){
+  container.innerHTML='';
+  const dk = dateKey(dateForKey);
+  const checks = PROGRESS.dailyChecks[dk] || [];
+  blocks.forEach((b,i)=>{
+    const row=document.createElement('div');
+    row.className='tblock'+(checks.includes(i)?' done':'');
+    row.innerHTML = `
+      <div class="t">${b.start}<br>${b.end}</div>
+      <div class="dot" style="background:${CAT_COLORS[b.cat]||'#666'}"></div>
+      <div class="body">
+        <input type="checkbox" class="chk" ${checks.includes(i)?'checked':''}>
+        <div class="title">${b.title}</div>
+        ${b.note? `<div class="note">${b.note}</div>`:''}
+      </div>`;
+    row.querySelector('.chk').addEventListener('change',(e)=>{
+      let arr = PROGRESS.dailyChecks[dk] || [];
+      if(e.target.checked){ if(!arr.includes(i)) arr.push(i); }
+      else { arr = arr.filter(x=>x!==i); }
+      PROGRESS.dailyChecks[dk]=arr;
+      saveProgress();
+      row.classList.toggle('done', e.target.checked);
+    });
+    container.appendChild(row);
+  });
+}
+function bannerHTML(banner){
+  if(!banner) return '';
+  const label = banner.type==='drive'?'Placement drive':banner.type==='exam'?'Exam window':'Note';
+  return `<div class="banner ${banner.type}"><b>${label}:</b> ${banner.text}</div>`;
+}
+
+function renderToday(){
+  const now = new Date();
+  const {blocks, banner} = scheduleFor(now);
+  document.getElementById('todayTitle').textContent = fmtDateLong(now);
+  const wk = weekNumber(now);
+  const phase = now<COLLEGE_START ? (now<IIM_START?'Pre-IIM phase':'IIM phase, pre-college') : 'Full load (college + IIM)';
+  document.getElementById('todayMeta').textContent = `Week ${wk} · ${phase}`;
+  document.getElementById('todayBanner').innerHTML = bannerHTML(banner);
+  renderTimeline(document.getElementById('todayTimeline'), blocks, now);
+}
+
+/* ---------- The Lamp (Pomodoro) ---------- */
+let lampState = {running:false, mode:'focus', remaining:0, timer:null};
+function lampSetup(){
+  const wk = weekNumber(new Date());
+  const p = pomodoroForWeek(wk);
+  lampState.focusLen = p.focus*60;
+  lampState.brkLen = p.brk*60;
+  lampState.remaining = lampState.focusLen;
+  document.getElementById('lampDesc').textContent = p.label + ' — this widens automatically as the weeks go by.';
+  lampRender();
+}
+function lampRender(){
+  const total = lampState.mode==='focus'? lampState.focusLen : lampState.brkLen;
+  const ring = document.getElementById('lampRing');
+  const circumference = 301.6;
+  const pct = lampState.remaining/total;
+  ring.style.strokeDashoffset = circumference*pct;
+  ring.classList.toggle('break', lampState.mode==='break');
+  const m = Math.floor(lampState.remaining/60), s=lampState.remaining%60;
+  document.getElementById('lampTime').textContent = pad(m)+':'+pad(s);
+  document.getElementById('lampPhase').textContent = lampState.mode;
+}
+function lampTick(){
+  lampState.remaining--;
+  if(lampState.remaining<=0){
+    lampState.mode = lampState.mode==='focus' ? 'break' : 'focus';
+    lampState.remaining = lampState.mode==='focus'? lampState.focusLen : lampState.brkLen;
+  }
+  lampRender();
+}
+document.getElementById('lampStart').addEventListener('click',()=>{
+  if(lampState.running) return;
+  lampState.running=true;
+  lampState.timer = setInterval(lampTick,1000);
+});
+document.getElementById('lampPause').addEventListener('click',()=>{
+  lampState.running=false; clearInterval(lampState.timer);
+});
+document.getElementById('lampReset').addEventListener('click',()=>{
+  lampState.running=false; clearInterval(lampState.timer);
+  lampState.mode='focus'; lampState.remaining=lampState.focusLen; lampRender();
+});
+
+/* ============================= RENDER: WEEK ============================= */
+let weekCursor = startOfWeek(new Date());
+let weekSelectedDay = new Date();
+
+function renderWeek(){
+  const grid = document.getElementById('weekGrid');
+  grid.innerHTML='';
+  const wk = weekNumber(weekCursor);
+  document.getElementById('weekLabel').textContent = `Week ${wk} · ${fmtDateShort(weekCursor)} – ${fmtDateShort(addDays(weekCursor,6))}`;
+  for(let i=0;i<7;i++){
+    const d = addDays(weekCursor,i);
+    const chip = document.createElement('div');
+    chip.className='daychip'+(sameDay(d,new Date())?' today':'');
+    const ev = findEvent(d);
+    chip.innerHTML = `<div class="dow">${DOW[d.getDay()]}</div><div class="num">${d.getDate()}</div>${ev?`<div class="flag">${ev.type==='drive'?'DRIVE':ev.type==='exam'?'EXAM':'●'}</div>`:''}`;
+    chip.addEventListener('click',()=>{ weekSelectedDay=d; renderWeekDay(); });
+    grid.appendChild(chip);
+  }
+  renderWeekDay();
+}
+function renderWeekDay(){
+  const d = weekSelectedDay;
+  const {blocks, banner} = scheduleFor(d);
+  document.getElementById('weekDayTitle').textContent = fmtDateLong(d);
+  document.getElementById('weekDayMeta').textContent = `Week ${weekNumber(d)}`;
+  document.getElementById('weekDayBanner').innerHTML = bannerHTML(banner);
+  renderTimeline(document.getElementById('weekDayTimeline'), blocks, d);
+}
+document.getElementById('weekPrev').addEventListener('click',()=>{ weekCursor=addDays(weekCursor,-7); renderWeek(); });
+document.getElementById('weekNext').addEventListener('click',()=>{ weekCursor=addDays(weekCursor,7); renderWeek(); });
+
+/* ============================= GOALS DATA ============================= */
+const THREE_MONTH_GOALS = [
+  {id:'3m-1', range:'Jul 17 – Oct 17', text:'Complete DSA modules 2 through 16 (Intro through Binary Search) with practice problems solved, not just watched'},
+  {id:'3m-2', range:'Jul 17 – Oct 17', text:'Clear the Godrej Infotech box test (Jul 31) and any other drive that lands in this window'},
+  {id:'3m-3', range:'Jul 17 – Oct 17', text:'Lock in the Pomodoro habit — stable at 25-min focus blocks from Week 3 onward, no skipped days'},
+  {id:'3m-4', range:'Jul 17 – Oct 17', text:'Stay current on IIM Digital Marketing assignments — nothing due-date-crammed'},
+  {id:'3m-5', range:'Jul 17 – Oct 17', text:'Gym 5x/week and guitar attendance without letting either slide once college starts'},
+  {id:'3m-6', range:'Oct 17 – Jan 17', text:'Finish Trees, Graphs, DP (Modules 17–19) plus all 5 assignments and the final interview-prep assignment'},
+  {id:'3m-7', range:'Oct 17 – Jan 17', text:'One full revision pass across all 19 modules + mock interviews before placement season peaks'},
+  {id:'3m-8', range:'Oct 17 – Jan 17', text:'Clear end-semester exams (Oct/Nov) using the adjusted study windows the Events tab creates'},
+  {id:'3m-9', range:'Oct 17 – Jan 17', text:"Run FFL 4.0 smoothly alongside all of the above — logistics don't fall on exam weeks"},
+];
+
+const MONTHLY_GOALS = {
+  'Jul 2026': [
+    'Finish Modules 2–7 (Intro through Array) — Array is the heaviest module this month, budget extra time',
+    'Get through the Godrej box test (Jul 31) with at least a week of daily 1-hour practice behind you',
+    'Settle into the Pomodoro ramp: 15min → 20min → 25min by end of month',
+    'Guitar classes back on track from Jul 20',
+    'IIM course orientation + first week of Digital Marketing content (from Jul 25)',
+  ],
+  'Aug 2026': [
+    'Finish Modules 8–13 (String, OOP, Time-Space, Stack/Queues, Linked List, HashMap)',
+    'Submit Assignment 1',
+    'First few weeks of college rhythm — adjust nap/travel timing if the 2hr commute estimate is off',
+    "Watch for Internal Assessment dates and add them to Events the moment they're announced",
+  ],
+  'Sep 2026': [
+    'Finish Modules 14–16 (Recursion, Sorting, Binary Search) — Recursion is the other heavy one',
+    'Submit Assignment 2',
+    'Handle Internal Assessments using the exam-mode schedule (Events tab)',
+  ],
+  'Oct 2026': [
+    'Finish Modules 17–18 (Trees, Graphs) — both are 9–10hr modules, spread across the full month',
+    'Submit Assignment 3',
+    'Enter end-semester exam season — lean on the exam override for revision-heavy days',
+  ],
+  'Nov 2026': [
+    'Finish Module 19 (Dynamic Programming)',
+    'Submit Assignments 4 and 5',
+    'Wrap end-semester exams',
+    'Start the Final Assignment (interview prep)',
+  ],
+  'Dec 2026': [
+    'Full syllabus revision pass — every module, problems re-attempted cold',
+    'Mock interviews and mock aptitude rounds',
+    'Keep the drive-day override ready — placement season is active',
+  ],
+  'Jan 2027': [
+    'Final Assignment polish and submission',
+    'Sustained interview readiness — revision + mocks continue',
+    'Reassess the whole system and plan the next cycle',
+  ],
+};
+
+const WEEK_PLAN = [
+  {dsa:'Modules 2–4: Intro to DSA, Data Types, Loops', extra:"Get the 15-min Pomodoro rhythm down first — don't worry about speed yet"},
+  {dsa:'Modules 5–6 + start Module 7: Questions, Functions, Array (intro)', extra:'Godrej box test daily practice ramps up — drive is end of next week'},
+  {dsa:'Module 7 continued: Array (heaviest module so far)', extra:"College starts Jul 31 — expect the first week to feel tight while the new rhythm settles. Godrej drive Jul 31 if it's still on Events."},
+  {dsa:'Module 8 + start Module 9: String, OOP (intro)', extra:'Settle into the college + IIM combined rhythm'},
+  {dsa:'Module 9 continued: OOP (static, inheritance, polymorphism, dynamic dispatch)', extra:''},
+  {dsa:'Modules 10–11: Time-Space Complexity, Stack & Queues', extra:''},
+  {dsa:'Module 12: Linked List (10 lectures — long one)', extra:''},
+  {dsa:'Module 13: HashMap', extra:'Assignment 1 due this week'},
+  {dsa:'Module 14 part 1: Recursion intro + backtracking basics', extra:''},
+  {dsa:'Module 14 part 2: Recursion — subsets, N-Queens, combination sums', extra:'Assignment 2 due this week'},
+  {dsa:'Modules 15–16: Sorting, Binary Search', extra:''},
+  {dsa:'Buffer / catch-up week', extra:'Check Events — if an Internal Assessment lands here, this week auto-switches to exam-revision mode'},
+  {dsa:'Module 17 part 1: Trees — BST, Heaps, traversals', extra:''},
+  {dsa:'Module 17 part 2: Trees — practice problems 1–4', extra:'Assignment 3 due this week'},
+  {dsa:'Module 18 part 1: Graphs — BFS/DFS, cycles, bipartite, topo sort', extra:''},
+  {dsa:"Module 18 part 2: Graphs — Dijkstra, Bellman-Ford, Prim's, Kruskal", extra:''},
+  {dsa:'Buffer / IA or end-sem prep week', extra:'Check Events for exam dates'},
+  {dsa:'Module 19 part 1: DP — climbing stairs through partition problems', extra:''},
+  {dsa:'Module 19 part 2: DP — coin change, LCS, min cost tickets', extra:'Assignment 4 due this week'},
+  {dsa:'Assignment 5 + start full syllabus revision', extra:''},
+  {dsa:'Revision + mock interviews + aptitude intensive', extra:''},
+  {dsa:'End-sem prep buffer', extra:'Check Events — this week likely switches to exam mode'},
+  {dsa:'End-sem prep buffer', extra:'Check Events — this week likely switches to exam mode'},
+  {dsa:'Final Assignment: interview prep', extra:'Placement season push — keep the drive override ready'},
+  {dsa:'Revision + mock drives', extra:''},
+  {dsa:'Buffer / reassess the whole system', extra:'Six months done — decide what the next cycle looks like'},
+];
+
+function weekDateRange(n){
+  const s = addDays(startOfWeek(START_DATE), (n-1)*7);
+  return `${fmtDateShort(s)} – ${fmtDateShort(addDays(s,6))}`;
+}
+
+/* ---------- goal rendering ---------- */
+function goalItem(id, text){
+  const checked = !!PROGRESS.goalChecks[id];
+  const div = document.createElement('div');
+  div.className='goal-item'+(checked?' checked':'');
+  div.innerHTML = `<input type="checkbox" ${checked?'checked':''}><span>${text}</span>`;
+  div.querySelector('input').addEventListener('change',(e)=>{
+    PROGRESS.goalChecks[id]=e.target.checked;
+    saveProgress();
+    div.classList.toggle('checked', e.target.checked);
+  });
+  return div;
+}
+
+function renderThreeMonth(){
+  const c = document.getElementById('threeMonthGoals');
+  c.innerHTML='';
+  let lastRange=null;
+  THREE_MONTH_GOALS.forEach(g=>{
+    if(g.range!==lastRange){
+      const h=document.createElement('h3'); h.textContent=g.range; h.style.cssText='font-family:var(--font-d);font-size:14px;color:var(--accent);margin:14px 0 4px;';
+      c.appendChild(h); lastRange=g.range;
+    }
+    c.appendChild(goalItem(g.id,g.text));
+  });
+}
+
+let monthPicked = null;
+function renderMonthPicker(){
+  const wrap = document.getElementById('monthPicker');
+  wrap.innerHTML='';
+  const months = Object.keys(MONTHLY_GOALS);
+  const now = new Date();
+  if(!monthPicked) monthPicked = months.find(m=>m.startsWith(now.toLocaleString('en-US',{month:'short'}))) || months[0];
+  months.forEach(m=>{
+    const b=document.createElement('button');
+    b.textContent=m; if(m===monthPicked) b.classList.add('on');
+    b.addEventListener('click',()=>{ monthPicked=m; renderMonthPicker(); renderMonthlyGoals(); });
+    wrap.appendChild(b);
+  });
+}
+function renderMonthlyGoals(){
+  const c = document.getElementById('monthlyGoals');
+  c.innerHTML='';
+  (MONTHLY_GOALS[monthPicked]||[]).forEach((t,i)=>{
+    c.appendChild(goalItem('month-'+monthPicked+'-'+i, t));
+  });
+}
+
+let goalWeekCursor = weekNumber(new Date());
+function renderWeeklyGoals(){
+  const idx = goalWeekCursor-1;
+  const plan = WEEK_PLAN[Math.max(0,Math.min(WEEK_PLAN.length-1, idx))];
+  document.getElementById('goalWeekLabel').textContent = `Week ${goalWeekCursor} · ${weekDateRange(goalWeekCursor)}`;
+  document.getElementById('weekGoalMeta').textContent = pomodoroForWeek(goalWeekCursor).label;
+  const c = document.getElementById('weeklyGoals');
+  c.innerHTML='';
+  c.appendChild(goalItem('wk-'+goalWeekCursor+'-dsa', 'DSA target: '+plan.dsa));
+  if(plan.extra) c.appendChild(goalItem('wk-'+goalWeekCursor+'-extra', plan.extra));
+  c.appendChild(goalItem('wk-'+goalWeekCursor+'-apt', 'Aptitude/Godrej practice on all scheduled days this week'));
+  c.appendChild(goalItem('wk-'+goalWeekCursor+'-habit', 'Gym + guitar + Pomodoro discipline held all week'));
+}
+document.getElementById('goalWeekPrev').addEventListener('click',()=>{ if(goalWeekCursor>1) goalWeekCursor--; renderWeeklyGoals(); });
+document.getElementById('goalWeekNext').addEventListener('click',()=>{ if(goalWeekCursor<26) goalWeekCursor++; renderWeeklyGoals(); });
+
+/* ============================= DSA TRACKER ============================= */
+const DSA_MODULES = [
+  {id:'m2',t:'Module 2: Introduction to DSA with Java',w:1},
+  {id:'m3',t:'Module 3: Data Types',w:1},
+  {id:'m4',t:'Module 4: Loops',w:1},
+  {id:'m5',t:'Module 5: Questions (Prime & Reverse, Inverse & Rotate)',w:2},
+  {id:'m6',t:'Module 6: Functions',w:2},
+  {id:'m7',t:'Module 7: Array (9 lectures — the big one)',w:3},
+  {id:'m8',t:'Module 8: String',w:4},
+  {id:'m9',t:'Module 9: Object Oriented Programming',w:5},
+  {id:'m10',t:'Module 10: Time & Space Complexity',w:6},
+  {id:'m11',t:'Module 11: Stack & Queues',w:6},
+  {id:'m12',t:'Module 12: Linked List',w:7},
+  {id:'m13',t:'Module 13: HashMap',w:8},
+  {id:'a1',t:'Assignment 1',w:8},
+  {id:'m14',t:'Module 14: Recursion & Backtracking',w:9},
+  {id:'a2',t:'Assignment 2',w:10},
+  {id:'m15',t:'Module 15: Sorting',w:11},
+  {id:'m16',t:'Module 16: Binary Search',w:11},
+  {id:'m17',t:'Module 17: Trees (10.5 hrs — split across 2 weeks)',w:13},
+  {id:'a3',t:'Assignment 3',w:14},
+  {id:'m18',t:'Module 18: Graphs (9.4 hrs — split across 2 weeks)',w:15},
+  {id:'m19',t:'Module 19: Dynamic Programming (9 hrs — split across 2 weeks)',w:18},
+  {id:'a4',t:'Assignment 4',w:19},
+  {id:'a5',t:'Assignment 5',w:20},
+  {id:'final',t:'Final Assignment: Interview Prep',w:24},
+];
+
+function renderDSA(){
+  const c = document.getElementById('dsaList');
+  c.innerHTML='';
+  let done=0;
+  DSA_MODULES.forEach(m=>{
+    const checked = !!PROGRESS.dsaChecks[m.id];
+    if(checked) done++;
+    const row=document.createElement('div');
+    row.className='module-row'+(checked?' checked':'');
+    row.innerHTML = `<input type="checkbox" ${checked?'checked':''}><div class="m-title">${m.t}</div><div class="m-week">Week ${m.w}</div>`;
+    row.querySelector('input').addEventListener('change',(e)=>{
+      PROGRESS.dsaChecks[m.id]=e.target.checked;
+      saveProgress();
+      renderDSA();
+    });
+    c.appendChild(row);
+  });
+  const pct = Math.round(done/DSA_MODULES.length*100);
+  document.getElementById('dsaProgressBar').style.width = pct+'%';
+  document.getElementById('dsaProgressLabel').textContent = `${done} / ${DSA_MODULES.length} complete · ${pct}%`;
+}
+
+/* ============================= EVENTS ============================= */
+function renderEvents(){
+  const c = document.getElementById('eventList');
+  c.innerHTML='';
+  if(EVENTS.length===0){ c.innerHTML='<div class="empty">Nothing added yet — placement drives and exam dates you add will show here.</div>'; return; }
+  const sorted = [...EVENTS].sort((a,b)=>a.start.localeCompare(b.start));
+  sorted.forEach(ev=>{
+    const row=document.createElement('div');
+    row.className='event-row '+ev.type;
+    const dates = ev.end && ev.end!==ev.start ? `${ev.start} → ${ev.end}` : ev.start;
+    row.innerHTML = `<div><span class="et">${ev.type}</span><div class="name" style="margin-top:6px;">${ev.title}</div><div class="dates">${dates}</div>${ev.notes?`<div class="dates">${ev.notes}</div>`:''}</div><button class="del">Remove</button>`;
+    row.querySelector('.del').addEventListener('click',()=>{
+      EVENTS = EVENTS.filter(e=>e!==ev);
+      saveEvents(); renderEvents(); renderToday(); renderWeek();
+    });
+    c.appendChild(row);
+  });
+}
+document.getElementById('evAdd').addEventListener('click',()=>{
+  const title = document.getElementById('evTitle').value.trim();
+  const type = document.getElementById('evType').value;
+  const start = document.getElementById('evStart').value;
+  const end = document.getElementById('evEnd').value;
+  const notes = document.getElementById('evNotes').value.trim();
+  if(!title || !start){ alert('Add at least a title and a start date.'); return; }
+  EVENTS.push({title,type,start,end:end||start,notes});
+  saveEvents();
+  document.getElementById('evTitle').value='';
+  document.getElementById('evNotes').value='';
+  document.getElementById('evStart').value='';
+  document.getElementById('evEnd').value='';
+  renderEvents(); renderToday(); renderWeek();
+});
+
+document.getElementById('syncConnect').addEventListener('click', async ()=>{
+  const val = document.getElementById('syncCodeInput').value.trim();
+  if(!val){ alert('Type a sync code first — any word/phrase works, just use the same one on every device.'); return; }
+  if(!firebaseReady){ alert('Paste your Firebase config into the script first (see the comment near the top of the file).'); return; }
+  SYNC_CODE = val;
+  localStorage.setItem('ledger-sync-code', SYNC_CODE);
+  await loadAll();
+  startRealtimeSync();
+  refreshEverything();
+});
+
+/* ============================= SETTINGS ============================= */
+document.getElementById('gtMonWed').addEventListener('click',()=>{
+  SETTINGS.guitarMode='monwed'; saveSettings();
+  document.getElementById('gtMonWed').classList.add('on');
+  document.getElementById('gtSat').classList.remove('on');
+  renderToday(); renderWeek();
+});
+document.getElementById('gtSat').addEventListener('click',()=>{
+  SETTINGS.guitarMode='sat'; saveSettings();
+  document.getElementById('gtSat').classList.add('on');
+  document.getElementById('gtMonWed').classList.remove('on');
+  renderToday(); renderWeek();
+});
+document.getElementById('resetData').addEventListener('click', async ()=>{
+  if(!confirm('This clears all saved events, checkmarks and settings. Continue?')) return;
+  PROGRESS = {goalChecks:{}, dsaChecks:{}, dailyChecks:{}};
+  EVENTS = [];
+  SETTINGS = {guitarMode:'monwed'};
+  await saveProgress(); await saveEvents(); await saveSettings();
+  location.reload();
+});
+
+/* ============================= TABS ============================= */
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ============================= INIT ============================= */
+async function init(){
+  if(SYNC_CODE) document.getElementById('syncCodeInput').value = SYNC_CODE;
+  await loadAll();
+  if(SYNC_CODE && firebaseReady) startRealtimeSync();
+  updateSyncStatus();
+
+  if(SETTINGS.guitarMode==='sat'){
+    document.getElementById('gtSat').classList.add('on');
+    document.getElementById('gtMonWed').classList.remove('on');
+  }
+
+  renderToday();
+  lampSetup();
+  renderWeek();
+  renderThreeMonth();
+  renderMonthPicker();
+  renderMonthlyGoals();
+  renderWeeklyGoals();
+  renderDSA();
+  renderEvents();
+}
+init();
+</script>
+</body>
+</html>
